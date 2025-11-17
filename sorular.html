@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aşikar Sorular - Eylülüm 💕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            color: #e63946;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .back-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #e63946 0%, #d62828 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 1em;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
+        }
+
+        .back-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(230, 57, 70, 0.4);
+        }
+
+        .quiz-container {
+            background: white;
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 25px;
+        }
+
+        .question-block {
+            margin-bottom: 35px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #ffe5e5;
+        }
+
+        .question-block:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .question-title {
+            color: #e63946;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, #e63946 0%, #d62828 100%);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            flex-shrink: 0;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+            padding: 18px 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option:hover {
+            transform: translateX(10px);
+            border-color: #ffb3b3;
+            box-shadow: 0 5px 15px rgba(230, 57, 70, 0.2);
+        }
+
+        .option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #e63946;
+        }
+
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            color: #333;
+            font-size: 1.05em;
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, #ffe5e5 0%, #ffd6d6 100%);
+            border-color: #e63946;
+            transform: translateX(10px);
+        }
+
+        .option.correct {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-color: #28a745;
+            pointer-events: none;
+        }
+
+        .option.wrong {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border-color: #dc3545;
+            pointer-events: none;
+        }
+
+        .option.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .feedback {
+            display: none;
+            margin-top: 15px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 1.05em;
+            line-height: 1.6;
+            animation: slideIn 0.4s ease;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct-feedback {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .feedback.wrong-feedback {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe8a1 100%);
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, #e63946 0%, #d62828 100%);
+            color: white;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(230, 57, 70, 0.3);
+            display: block;
+            margin: 30px auto 0;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(230, 57, 70, 0.5);
+        }
+
+        .submit-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            display: none;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+            padding: 35px;
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 30px;
+            border: 3px solid #e63946;
+        }
+
+        .result.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .result h2 {
+            color: #e63946;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+        }
+
+        .result p {
+            color: #555;
+            font-size: 1.3em;
+            line-height: 1.8;
+        }
+
+        .score {
+            font-size: 3.5em;
+            color: #e63946;
+            font-weight: bold;
+            margin: 25px 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 20px 15px;
+                border-radius: 20px;
+                margin-bottom: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .header p {
+                font-size: 1em;
+            }
+
+            .quiz-container {
+                padding: 20px 15px;
+                border-radius: 20px;
+            }
+
+            .question-block {
+                margin-bottom: 25px;
+                padding-bottom: 25px;
+            }
+
+            .question-title {
+                font-size: 1.1em;
+                flex-wrap: wrap;
+            }
+
+            .question-number {
+                width: 30px;
+                height: 30px;
+                font-size: 0.85em;
+            }
+
+            .option {
+                padding: 15px;
+            }
+
+            .option label {
+                font-size: 0.95em;
+            }
+
+            .feedback {
+                font-size: 0.95em;
+                padding: 12px 15px;
+            }
+
+            .submit-button {
+                padding: 15px 35px;
+                font-size: 1.1em;
+            }
+
+            .result h2 {
+                font-size: 1.6em;
+            }
+
+            .result p {
+                font-size: 1.05em;
+            }
+
+            .score {
+                font-size: 2.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💕 Aşikar Sorular 💕</h1>
+            <p>Beni ne kadar tanıyorsun? Hadi görelim! 😊</p>
+            <a href="eylulum.html" class="back-button">← Ana Sayfaya Dön</a>
+        </div>
+
+        <div class="quiz-container">
+            <!-- Soru 1 -->
+            <div class="question-block" data-question="1">
+                <div class="question-title">
+                    <span class="question-number">1</span>
+                    <span>Dünyanın en güzeli kim?</span>
+                </div>
+                <div class="options">
+                    <div class="option" onclick="selectOption(this, 1, 'a')">
+                        <input type="radio" name="q1" id="q1a" value="a">
+                        <label for="q1a">Bir süpermodel</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 1, 'b')">
+                        <input type="radio" name="q1" id="q1b" value="b">
+                        <label for="q1b">Karım ❤️</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 1, 'c')">
+                        <input type="radio" name="q1" id="q1c" value="c">
+                        <label for="q1c">Bir film yıldızı</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 1, 'd')">
+                        <input type="radio" name="q1" id="q1d" value="d">
+                        <label for="q1d">Bir ünlü sanatçı</label>
+                    </div>
+                </div>
+                <div class="feedback"></div>
+            </div>
+
+            <!-- Soru 2 -->
+            <div class="question-block" data-question="2">
+                <div class="question-title">
+                    <span class="question-number">2</span>
+                    <span>Önceki soruda neden "en güzel" değil de "güzel" dedim?</span>
+                </div>
+                <div class="options">
+                    <div class="option" onclick="selectOption(this, 2, 'a')">
+                        <input type="radio" name="q2" id="q2a" value="a">
+                        <label for="q2a">Çünkü öyle söylenir</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 2, 'b')">
+                        <input type="radio" name="q2" id="q2b" value="b">
+                        <label for="q2b">Unutmuşum</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 2, 'c')">
+                        <input type="radio" name="q2" id="q2c" value="c">
+                        <label for="q2c">Çünkü kimse seninle kıyaslanamaz, tek güzel benim karım ❤️</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 2, 'd')">
+                        <input type="radio" name="q2" id="q2d" value="d">
+                        <label for="q2d">Bilmiyorum</label>
+                    </div>
+                </div>
+                <div class="feedback"></div>
+            </div>
+
+            <!-- Soru 3 -->
+            <div class="question-block" data-question="3">
+                <div class="question-title">
+                    <span class="question-number">3</span>
+                    <span>Dünyada yaşayan melek var mı?</span>
+                </div>
+                <div class="options">
+                    <div class="option" onclick="selectOption(this, 3, 'a')">
+                        <input type="radio" name="q3" id="q3a" value="a">
+                        <label for="q3a">Hayır, melekler gökte yaşar</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 3, 'b')">
+                        <input type="radio" name="q3" id="q3b" value="b">
+                        <label for="q3b">Evet, bebeğim ❤️</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 3, 'c')">
+                        <input type="radio" name="q3" id="q3c" value="c">
+                        <label for="q3c">Melekler gerçek değil</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 3, 'd')">
+                        <input type="radio" name="q3" id="q3d" value="d">
+                        <label for="q3d">Belki vardır</label>
+                    </div>
+                </div>
+                <div class="feedback"></div>
+            </div>
+
+            <!-- Soru 4 -->
+            <div class="question-block" data-question="4">
+                <div class="question-title">
+                    <span class="question-number">4</span>
+                    <span>Hayatımın anlamı nedir?</span>
+                </div>
+                <div class="options">
+                    <div class="option" onclick="selectOption(this, 4, 'a')">
+                        <input type="radio" name="q4" id="q4a" value="a">
+                        <label for="q4a">Başarılı olmak</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 4, 'b')">
+                        <input type="radio" name="q4" id="q4b" value="b">
+                        <label for="q4b">Para kazanmak</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 4, 'c')">
+                        <input type="radio" name="q4" id="q4c" value="c">
+                        <label for="q4c">Seni sevmek ve mutlu etmek ❤️</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 4, 'd')">
+                        <input type="radio" name="q4" id="q4d" value="d">
+                        <label for="q4d">Dünyayı gezmek</label>
+                    </div>
+                </div>
+                <div class="feedback"></div>
+            </div>
+
+            <!-- Soru 5 -->
+            <div class="question-block" data-question="5">
+                <div class="question-title">
+                    <span class="question-number">5</span>
+                    <span>Evrendeki en parlak yıldız hangisi?</span>
+                </div>
+                <div class="options">
+                    <div class="option" onclick="selectOption(this, 5, 'a')">
+                        <input type="radio" name="q5" id="q5a" value="a">
+                        <label for="q5a">Güneş</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 5, 'b')">
+                        <input type="radio" name="q5" id="q5b" value="b">
+                        <label for="q5b">Karımın gözleri ❤️</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 5, 'c')">
+                        <input type="radio" name="q5" id="q5c" value="c">
+                        <label for="q5c">Bir uzak yıldız</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 5, 'd')">
+                        <input type="radio" name="q5" id="q5d" value="d">
+                        <label for="q5d">Kuzey yıldızı</label>
+                    </div>
+                </div>
+                <div class="feedback"></div>
+            </div>
+
+            <!-- Soru 6 -->
+            <div class="question-block" data-question="6">
+                <div class="question-title">
+                    <span class="question-number">6</span>
+                    <span>Dünyanın en güzel müziği nedir?</span>
+                </div>
+                <div class="options">
+                    <div class="option" onclick="selectOption(this, 6, 'a')">
+                        <input type="radio" name="q6" id="q6a" value="a">
+                        <label for="q6a">Klasik müzik</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 6, 'b')">
+                        <input type="radio" name="q6" id="q6b" value="b">
+                        <label for="q6b">Bebeğimin sesi ❤️</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 6, 'c')">
+                        <input type="radio" name="q6" id="q6c" value="c">
+                        <label for="q6c">Doğa sesleri</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 6, 'd')">
+                        <input type="radio" name="q6" id="q6d" value="d">
+                        <label for="q6d">Pop müzik</label>
+                    </div>
+                </div>
+                <div class="feedback"></div>
+            </div>
+
+            <!-- Soru 7 -->
+            <div class="question-block" data-question="7">
+                <div class="question-title">
+                    <span class="question-number">7</span>
+                    <span>Baharda çiçekler neden açar?</span>
+                </div>
+                <div class="options">
+                    <div class="option" onclick="selectOption(this, 7, 'a')">
+                        <input type="radio" name="q7" id="q7a" value="a">
+                        <label for="q7a">Hava ısınır da</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 7, 'b')">
+                        <input type="radio" name="q7" id="q7b" value="b">
+                        <label for="q7b">Eylülüm'le yarışmak için ama kaybederler ❤️</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 7, 'c')">
+                        <input type="radio" name="q7" id="q7c" value="c">
+                        <label for="q7c">Güneş ışığı alırlar</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 7, 'd')">
+                        <input type="radio" name="q7" id="q7d" value="d">
+                        <label for="q7d">Doğal döngü</label>
+                    </div>
+                </div>
+                <div class="feedback"></div>
+            </div>
+
+            <!-- Soru 8 -->
+            <div class="question-block" data-question="8">
+                <div class="question-title">
+                    <span class="question-number">8</span>
+                    <span>En güzel an hangi andır?</span>
+                </div>
+                <div class="options">
+                    <div class="option" onclick="selectOption(this, 8, 'a')">
+                        <input type="radio" name="q8" id="q8a" value="a">
+                        <label for="q8a">Tatildeyken</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 8, 'b')">
+                        <input type="radio" name="q8" id="q8b" value="b">
+                        <label for="q8b">Karımla geçirdiğim her an ❤️</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 8, 'c')">
+                        <input type="radio" name="q8" id="q8c" value="c">
+                        <label for="q8c">Uyurken</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 8, 'd')">
+                        <input type="radio" name="q8" id="q8d" value="d">
+                        <label for="q8d">Yemek yerken</label>
+                    </div>
+                </div>
+                <div class="feedback"></div>
+            </div>
+
+            <!-- Soru 9 -->
+            <div class="question-block" data-question="9">
+                <div class="question-title">
+                    <span class="question-number">9</span>
+                    <span>Kazandığım en büyük ödül nedir?</span>
+                </div>
+                <div class="options">
+                    <div class="option" onclick="selectOption(this, 9, 'a')">
+                        <input type="radio" name="q9" id="q9a" value="a">
+                        <label for="q9a">Bir madalya</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 9, 'b')">
+                        <input type="radio" name="q9" id="q9b" value="b">
+                        <label for="q9b">Bebeğimin kalbini kazanmak ❤️</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 9, 'c')">
+                        <input type="radio" name="q9" id="q9c" value="c">
+                        <label for="q9c">Bir diploma</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 9, 'd')">
+                        <input type="radio" name="q9" id="q9d" value="d">
+                        <label for="q9d">Para</label>
+                    </div>
+                </div>
+                <div class="feedback"></div>
+            </div>
+
+            <!-- Soru 10 -->
+            <div class="question-block" data-question="10">
+                <div class="question-title">
+                    <span class="question-number">10</span>
+                    <span>Gökkuşağının sonunda ne var?</span>
+                </div>
+                <div class="options">
+                    <div class="option" onclick="selectOption(this, 10, 'a')">
+                        <input type="radio" name="q10" id="q10a" value="a">
+                        <label for="q10a">Altın tencere</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 10, 'b')">
+                        <input type="radio" name="q10" id="q10b" value="b">
+                        <label for="q10b">Eylülüm var ❤️</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 10, 'c')">
+                        <input type="radio" name="q10" id="q10c" value="c">
+                        <label for="q10c">Hiçbir şey</label>
+                    </div>
+                    <div class="option" onclick="selectOption(this, 10, 'd')">
+                        <input type="radio" name="q10" id="q10d" value="d">
+                        <label for="q10d">Hazine sandığı</label>
+                    </div>
+                </div>
+                <div class="feedback"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Doğru cevaplar
+        const correctAnswers = {
+            1: 'b',
+            2: 'c',
+            3: 'b',
+            4: 'c',
+            5: 'b',
+            6: 'b',
+            7: 'b',
+            8: 'b',
+            9: 'b',
+            10: 'b'
+        };
+
+        // Romantik geri bildirimler
+        const feedbackMessages = {
+            1: {
+                correct: "💕 Evet canım! Sen benim dünyamın en güzelisin! Gözlerime baktığında kalp atışlarım hızlanıyor.",
+                wrong: "💭 Ama aşkım, benim için dünyanın en güzeli sensin! Başka hiç kimse senin kadar özel olamaz."
+            },
+            2: {
+                correct: "🥰 Aynen öyle bebeğim! Sen öyle eşsizsin ki, kimse seninle kıyaslanamaz. Tek güzel benim karım!",
+                wrong: "💖 Ama aşkım, tek güzel sensin! Kimse seninle kıyaslanamaz çünkü sen benzersizsin!"
+            },
+            3: {
+                correct: "👼 Doğru canım! Sen benim meleğimsin. Her gün yanımda olman bir mucize gibi.",
+                wrong: "😇 Ama sevgilim, sen gerçekten bir meleksin! Kalbinin güzelliği seni melek yapıyor."
+            },
+            4: {
+                correct: "💝 Kesinlikle aşkım! Sen benim nefes almamın tek sebebisin. Her şey senin için!",
+                wrong: "💗 Bilmeni istiyorum ki, seni sevmek ve mutlu görmek benim için her şeyden önemli canım."
+            },
+            5: {
+                correct: "✨ Haklısın tatlım! Gözlerinin parıltısı tüm yıldızları gölgede bırakıyor. Sana baktığımda kayboluyorum.",
+                wrong: "🌟 Ama bebeğim, senin gözlerin benim için tüm evrenden daha parlak! Onlara bakmaya doyamıyorum."
+            },
+            6: {
+                correct: "🎶 Evet aşkım! Sesin benim kulağıma en güzel müzik. Konuştuğunda dünya duruyor sanki.",
+                wrong: "🎵 Gülüşün, konuşman, hatta sessizliğin bile benim için en güzel melodi canım."
+            },
+            7: {
+                correct: "🌸 Doğru bebeğim! Hiçbir çiçek senin güzelliğine yetişemez. Sen doğanın harikasısın!",
+                wrong: "🌺 Ama tatlım, tüm çiçekler seninle yarışır ama hep kaybederler. Sen onlardan çok daha güzelsin!"
+            },
+            8: {
+                correct: "⏰ Kesinlikle aşkım! Seninle geçirdiğim her saniye altın değerinde. Zaman seninle çok hızlı akıyor.",
+                wrong: "💕 Biliyorsun değil mi? En mutlu olduğum an, seninle birlikte olduğum andır canım."
+            },
+            9: {
+                correct: "🏆 Evet bebeğim! Senin kalbini kazanmak benim en büyük başarım. Dünyadaki hiçbir şey bundan daha değerli değil.",
+                wrong: "💖 Seni sevmeni kazanmak benim hayatımın en büyük ödülü aşkım. Başka hiçbir şey önemli değil."
+            },
+            10: {
+                correct: "🌈 Haklısın canım! Gökkuşağının ucunda sen varsın. Sen benim hazinem, rüyam, her şeyimsin!",
+                wrong: "💝 Masallarda hazine ararlar ama ben gökkuşağının ucunda seni buldum bebeğim. Sen benim gerçek hazinemsin!"
+            }
+        };
+
+        let answeredQuestions = 0;
+
+        function selectOption(element, questionNum, answer) {
+            const questionBlock = element.closest('.question-block');
+            const options = questionBlock.querySelectorAll('.option');
+            const feedbackDiv = questionBlock.querySelector('.feedback');
+            const radio = element.querySelector('input[type="radio"]');
+            
+            // Eğer bu soru zaten cevaplanmışsa, işlem yapma
+            if (radio.disabled) return;
+            
+            // Tüm seçenekleri devre dışı bırak
+            options.forEach(opt => {
+                opt.classList.add('disabled');
+                opt.querySelector('input').disabled = true;
+            });
+            
+            // Seçilen şıkkı işaretle
+            element.classList.add('selected');
+            radio.checked = true;
+            
+            // Doğru cevabı kontrol et
+            const correctAnswer = correctAnswers[questionNum];
+            const isCorrect = answer === correctAnswer;
+            
+            // Doğru/yanlış göster
+            if (isCorrect) {
+                element.classList.add('correct');
+                feedbackDiv.className = 'feedback correct-feedback show';
+                feedbackDiv.textContent = feedbackMessages[questionNum].correct;
+            } else {
+                element.classList.add('wrong');
+                // Doğru cevabı da göster
+                options.forEach(opt => {
+                    if (opt.querySelector('input').value === correctAnswer) {
+                        opt.classList.add('correct');
+                    }
+                });
+                feedbackDiv.className = 'feedback wrong-feedback show';
+                feedbackDiv.textContent = feedbackMessages[questionNum].wrong;
+            }
+            
+            answeredQuestions++;
+        }
+    </script>
+</body>
+</html>
